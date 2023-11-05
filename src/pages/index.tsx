@@ -1,7 +1,13 @@
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 
+import HomeNetwork from '@/components/networks/HomeNetwork';
+
 export default function Home() {
-  return <>Home</>;
+  return (
+    <HomeNetwork>
+      <>Home,,,</>
+    </HomeNetwork>
+  );
 }
 
 export const getServerSideProps = () => {
