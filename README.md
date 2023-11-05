@@ -181,3 +181,47 @@ const HomeContainer: FC = () => {
 
 export default HomeContainer;
 ```
+
+## useMutate
+
+```js
+// src/components/containers/HomeContainer.tsx
+
+import { FC } from 'react';
+import { useMutation } from '@tanstack/react-query';
+
+const HomeContainer: FC = () => {
+  const { mutate, mutateAsync } = useMutation({
+    // useMutation 훅은 서버 데이터를 수정(POST, PUT, DELETE, PATCH)할 때 사용되는 훅
+    // 인수로 쿼리에 대한 정보를 갖는 객체를 전달
+    // - mutationFn 프로퍼티에는 함수를 전달하며, 해당 함수는 서버 데이터를 수정하는 비동기 함수를 반환값으로 작성
+    //   반환값으로 작성한 비동기 함수는 Promise 객체를 반환하는 함수 작성
+    //   mutationFn은 인수로 객체를 전달받으며, 이는 useMutation 훅이 반환하는 객체의 mutate(mutateAsync) 호출시 전달되는 인수를 그대로 전달
+
+    // useMutation 훇은 객체를 반환하며, 반환되는 객체의 mutate 호출 시 mutateFn을 실행
+    // mutateAsync의 경우 mutate와 달리 Promise를 반환 이외 mutate와 동일
+    mutationFn: (variables: Object) => {
+      // Return Modifying Server Data Function
+      return Promise.resolve();
+    },
+    // mutateFn가 반환값에 작성한 비동기 함수의 상태가 fullfilled된 직후 실행될 함수
+    onSuccess: () => {
+      // Success mutateFn
+    },
+
+    // mutateFn가 반환값에 작성한 비동기 함수의 상태가 rejected된 직후 실행될 함수
+    onError: () => {
+      // Fail mutateFn
+    },
+
+    // mutateFn가 반환값에 작성한 비동기 함수의 상태가 settled된 직후 실행될 함수
+    onSettled: () => {
+      // settled mutateFn
+    }
+  });
+
+  return <>Home,,,</>;
+};
+
+export default HomeContainer;
+```
