@@ -55,3 +55,72 @@ export const getServerSideProps = () => {
   };
 };
 ```
+
+### QueryClient Default Options (with Suspense, ErrorBoundary)
+
+```js
+// src/pages/_app.tsx
+import type { AppProps } from 'next/app';
+import { useState } from 'react';
+import { QueryClient, QueryClientProvider, HydrationBoundary } from '@tanstack/react-query';
+
+export default function App({ Component, pageProps }: AppProps) {
+  // QueryClient를 new 연산자와 함께 호출할 때 전역적으로 쿼리에 대한 설정을 Set 가능
+  const [queryClient] = useState(
+    new QueryClient({
+      defaultOptions: {
+        // useQuery(useQueries) 훅에 대한 전역 설정
+        queries: {
+          retry: 0, // 쿼리 재시도 횟수를 전역적으로 설정 가능, 기본값은 3이며 기본적으로 3번의 재시도를 수행
+          suspense: true, // React의 Suspense와 함께 사용할 수 있도록 설정, 즉 쿼리 상태가 loading인 경우 Suspense에 설정한 컴포넌트를 렌더링
+          throwOnError: true // 쿼리 상태가 error인 경우 발생한 error를 throw 시켜주는 옵션이며, false인 경우 쿼리에서 발생한 에러가 자동으로 throw 되지 않음
+        },
+        // useMutation 훅에 대한 전역 설정
+        mutations: {
+          retry: 0, // 쿼리 재시도 횟수를 전역적으로 설정 가능, 기본값은 3이며 기본적으로 3번의 재시도를 수행
+          throwOnError: true // 쿼리 상태가 error인 경우 발생한 error를 throw 시켜주는 옵션이며, false인 경우 쿼리에서 발생한 에러가 자동으로 throw 되지 않음
+        }
+      }
+    })
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HydrationBoundary state={pageProps.dehydratedState}>
+        <Component {...pageProps} />
+      </HydrationBoundary>
+    </QueryClientProvider>
+  );
+}
+```
+
+```js
+// src/components/shared/networks/QueryBoundary.tsx
+import React, { FC, Suspense, ReactElement, ReactNode } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+
+interface IProps {
+  loadingFallback?: ReactElement;
+  errorFallback?: ReactElement;
+  children: ReactNode;
+}
+
+const QueryBoundary: FC<IProps> = ({
+  loadingFallback = <>Loading,,,</>,
+  errorFallback = <>Error,,,</>,
+  children
+}) => {
+  return (
+    // suspense option이 true인 경우, 쿼리 상태가 loading이라면 Suspense의 fallback 컴포넌트를 렌더링
+    // throwOnError option이 true인 경우, 쿼리 상태가 error라면 ErrorBoundary의 fallback 컴포넌트 렌더링
+
+    // Suspense는 하위에서 Lazy Loading, Data Fetching등 pending 상태에 대한 UI를 선언
+    // ErrorBoundary는 하위에서 try...catch문에서 catch와 같은 역할을 하며, throw된 error가 catch되지 않은 경우 렌더링될 UI를 선언
+    <ErrorBoundary fallback={errorFallback}>
+      <Suspense fallback={loadingFallback}>{children}</Suspense>;
+    </ErrorBoundary>
+  );
+};
+
+export default QueryBoundary;
+```
