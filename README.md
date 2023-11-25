@@ -72,8 +72,12 @@ export default function App({ Component, pageProps }: AppProps) {
         // useQuery(useQueries) 훅에 대한 전역 설정
         queries: {
           retry: 0, // 쿼리 재시도 횟수를 전역적으로 설정 가능, 기본값은 3이며 기본적으로 3번의 재시도를 수행
-          suspense: true, // React의 Suspense와 함께 사용할 수 있도록 설정, 즉 쿼리 상태가 loading인 경우 Suspense에 설정한 컴포넌트를 렌더링
           throwOnError: true // 쿼리 상태가 error인 경우 발생한 error를 throw 시켜주는 옵션이며, false인 경우 쿼리에서 발생한 에러가 자동으로 throw 되지 않음
+          retry: 0, // 쿼리 재시도 횟수를 전역적으로 설정 가능, 기본값은 3이며 기본적으로 3번의 재시도를 수행
+          throwOnError: false, // 쿼리 상태가 error인 경우 발생한 error를 throw 시켜주는 옵션, false인 경우 쿼리에서 발생한 에러가 자동으로 throw 되지 않음
+          enabled: true, // 쿼리가 자동으로 실행, false로 설정한 경우 수동으로 쿼리를 실행, 기본값은 true
+          gcTime: 5 * 60 * 1000, // 기존 cacheTime 옵션과 동일, inactive 및 unused 쿼리 데이터를 메모리에 유지시키는 시간, 기본값은 5분
+          staleTime: 0 // 쿼리 데이터가 fresh에서 stale로 전환되는 시간, 기본값은 0
         },
         // useMutation 훅에 대한 전역 설정
         mutations: {
