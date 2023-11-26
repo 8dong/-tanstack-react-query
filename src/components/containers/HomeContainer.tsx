@@ -78,7 +78,7 @@ const HomeContainer: FC = () => {
     }
   });
 
-  // 기존 queryClient의 suspense 옵션은 제거되고 필요에 따라 useSuspenseQuery 훅을 사용
+  // 기존(v4) queryClient의 suspense 옵션은 제거되고 필요에 따라 useSuspenseQuery 훅을 사용
   // suspense hook의 에러를 ErrorBoundary와 Suspense가 관리하므로 status 값이 언제나 success
   // useQuery 훅과 사용법, 반환값은 동일
   const { data: suspenseData, status: suspenseQueryDataStatus } = useSuspenseQuery({
