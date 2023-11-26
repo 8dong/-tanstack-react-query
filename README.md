@@ -265,7 +265,7 @@ const HomeContainer: FC = () => {
 export default HomeContainer;
 ```
 
-## useInfinityQuery
+## useInfinityQuery & useSuspenseInfintiyQuery
 
 ```js
 import { FC } from 'react';
@@ -302,6 +302,54 @@ const HomeContainer: FC = () => {
       // 만약 return 값이 undefined라면 fetchNextPage 메서드를 실행하지 않으며, hasNextPage 프로퍼티 값을 false로 갱신
       // return next getNexPageParam parameters
       return {};
+    }
+  });
+
+  const {
+    data: infinityQueryData,
+    status: infinityQueryDataStatus,
+    fetchNextPage,
+    hasNextPage
+  } = useInfiniteQuery({
+    queryKey: ['infinityQueryKey'],
+    queryFn: ({ pageParam }) => {
+      // useInfinityQuery 훅이 반환한 객체의 fetchNextPage 메서드 반환값이 getNextPageParam 메서드로 전달되고, getNextPageParam 메서드 반환값이 queryFn의 인수로 전달되면서 실행
+      // flow: fetchNextPage -> getNextPageParam -> queryFn
+      // queryFn은 인수로 객체를 전달받으며, 전달받는 객체의 pageParam 프로퍼티에는 getNextPage 메서드 반환값이 전달
+      // 반환값으로 Promise 객체를 반환하는 비동기 함수를 작성
+      return () => Promise.resolve();
+    },
+    initialPageParam: {
+      // set initial getNextPageParam parameters
+      // 초기 queryFn 인수로 전달될 객체의 pageParam 프로퍼티 값을 작성
+    },
+    getNextPageParam: (lastPage) => {
+      // 인수로 이전 쿼리 데이터를 전달받으며, useInfinityQuery 훅이 반환한 객체의 fetchNextPage 메서드 호출시 실행
+      // return next getNexPageParam parameters
+      return {};
+    }
+  });
+
+  // useInfinityQuery 훅 또한 suspense가 필요한 상황에서는 useSuspenseInfinityQuery 훅을 사용
+  // 사용법은 useInfinityQuery 훅과 동일
+  const {
+    data: infinityQueryData2,
+    status: infinityQueryData2Status,
+    fetchNextPage: fetchNextPage2,
+    hasNextPage: hasNextPage2
+  } = useSuspenseInfiniteQuery({
+    queryKey: ['suspenseInfinityQueryKey'],
+    queryFn: ({ pageParam }) => {
+      // return fetching data function that should be return promise object
+      return () => Promise.resolve();
+    },
+    initialPageParam: {
+      // set initial getNextPageParam parameters
+    },
+    getNextPageParam: (lastPage) => {
+      return {
+        // set next getNextPageParam parameters
+      };
     }
   });
 
