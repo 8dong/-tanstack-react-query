@@ -4,6 +4,7 @@ import {
   useMutation,
   useQueries,
   useQuery,
+  useSuspenseInfiniteQuery,
   useSuspenseQueries,
   useSuspenseQuery
 } from '@tanstack/react-query';
@@ -120,6 +121,29 @@ const HomeContainer: FC = () => {
       // 인수로 이전 쿼리 데이터를 전달받으며, useInfinityQuery 훅이 반환한 객체의 fetchNextPage 메서드 호출시 실행
       // return next getNexPageParam parameters
       return {};
+    }
+  });
+
+  // useInfinityQuery 훅 또한 suspense가 필요한 상황에서는 useSuspenseInfinityQuery 훅을 사용
+  // 사용법은 useInfinityQuery 훅과 동일
+  const {
+    data: infinityQueryData2,
+    status: infinityQueryData2Status,
+    fetchNextPage: fetchNextPage2,
+    hasNextPage: hasNextPage2
+  } = useSuspenseInfiniteQuery({
+    queryKey: ['suspenseInfinityQueryKey'],
+    queryFn: ({ pageParam }) => {
+      // return fetching data function that should be return promise object
+      return () => Promise.resolve();
+    },
+    initialPageParam: {
+      // set initial getNextPageParam parameters
+    },
+    getNextPageParam: (lastPage) => {
+      return {
+        // set next getNextPageParam parameters
+      };
     }
   });
 
