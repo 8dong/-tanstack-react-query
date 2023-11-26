@@ -1,5 +1,11 @@
 import { FC } from 'react';
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useSuspenseQueries,
+  useSuspenseQuery
+} from '@tanstack/react-query';
 
 const HomeContainer: FC = () => {
   // useQuery 훅 인수로 쿼리 정보에 대한 객체를 전달
@@ -70,6 +76,25 @@ const HomeContainer: FC = () => {
     onSettled: () => {
       // settled mutateFn
     }
+  });
+
+  // 기존 queryClient의 suspense 옵션은 제거되고 필요에 따라 useSuspenseQuery 훅을 사용
+  // suspense hook의 에러를 ErrorBoundary와 Suspense가 관리하므로 status 값이 언제나 success
+  // useQuery 훅과 사용법, 반환값은 동일
+  const { data: suspenseData, status: suspenseQueryDataStatus } = useSuspenseQuery({
+    queryKey: ['suspenseQuerykey1'],
+    queryFn: () => Promise.resolve(1)
+  });
+
+  // useQueries 훅과 동일하게 suspense가 필요한 상황에 useSuspenseQueries 훅을 필요에 따라 사용
+  // useQueries 훅과 사용법, 반환값은 동일
+  const [{ data: suspenseData2, status: suspenseQueryData2Status }] = useSuspenseQueries({
+    queries: [
+      {
+        queryKey: ['suspenseQueryKey2'],
+        queryFn: () => Promise.resolve()
+      }
+    ]
   });
 
   return <>Home,,,</>;

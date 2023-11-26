@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider, HydrationBoundary } from '@tanstack/r
 export default function App({ Component, pageProps }: AppProps) {
   // queryClient는 _app.tsx 파일 내 컴포넌트에 생성하고 이를 state로 관리
   // state로 관리한다면 서버와 클라인트간 queryClient 일치 보장
+  // 각 페이지별로 queryClient를 독립적으로 생성하여 사용
   const [queryClient] = useState(new QueryClient());
 
   return (
@@ -115,7 +116,7 @@ const QueryBoundary: FC<IProps> = ({
   children
 }) => {
   return (
-    // suspense option이 true인 경우, 쿼리 상태가 loading이라면 Suspense의 fallback 컴포넌트를 렌더링
+    // children에서 useSuspenseQuery, useSuspenseQueries, useSuspenseInfiniteQuery 사용하는 경우, 쿼리 상태가 loading이라면 Suspense의 fallback 컴포넌트를 렌더링
     // throwOnError option이 true인 경우, 쿼리 상태가 error라면 ErrorBoundary의 fallback 컴포넌트 렌더링
 
     // Suspense는 하위에서 Lazy Loading, Data Fetching등 pending 상태에 대한 UI를 선언
